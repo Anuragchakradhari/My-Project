@@ -1,2 +1,2 @@
 # My-Project
-Language Translator Webpage
+Language Translation Webpage
