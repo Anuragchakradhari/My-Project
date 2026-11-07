@@ -4,52 +4,731 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Free online Language Translator supporting real-time translation across 90+ world languages with text-to-speech, copy features, and personal vocabulary notebook.">
+    <title>Language Translator - Real-time Multi-Language Translation & Vocabulary Notebook</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>LANGUAGE TRANSLATOR</title>
-
 </head>
 
 <body>
     <div class="container">
-        <div class="wrapper">
-            <div class="text-input">
-                <textarea class="from-text" placeholder="Enter text"></textarea>
-                <textarea class="to-text" placeholder="Translation" readonly disabled></textarea>
+        <header class="header">
+            <div class="logo" aria-hidden="true">
+                <i class="fas fa-language"></i>
             </div>
-            <ul class="controls">
-                <li class="row from"></li>
-                    <div class="icons">
-                        <i id="from" class="fas fa-volume-up"></i>
-                        <i id="from" class="fas fa-copy"></i>
+            <div class="title-wrap">
+                <h1>Language Translator</h1>
+                <p>Instant translation across 90+ world languages & vocabulary notebook</p>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs: Switch Between Translator, Vocabulary Notebook, and Practice -->
+        <nav class="view-nav" role="tablist" aria-label="Application Views">
+            <button type="button" role="tab" id="tab-translator" aria-selected="true"
+                aria-controls="panel-translator" tabindex="0" class="nav-tab active">
+                <i class="fas fa-language" aria-hidden="true"></i>
+                <span>Translator</span>
+            </button>
+            <button type="button" role="tab" id="tab-notebook" aria-selected="false"
+                aria-controls="panel-notebook" tabindex="-1" class="nav-tab">
+                <i class="fas fa-book-open" aria-hidden="true"></i>
+                <span class="nav-tab-label"><span class="nav-tab-label-full">Vocabulary Notebook</span><span class="nav-tab-label-short">Notebook</span></span>
+                <span class="nav-badge" id="notebook-count-badge" aria-label="0 saved translations">0</span>
+            </button>
+            <button type="button" role="tab" id="tab-practice" aria-selected="false"
+                aria-controls="panel-practice" tabindex="-1" class="nav-tab">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span class="nav-tab-label">Practice</span>
+            </button>
+            <button type="button" role="tab" id="tab-progress" aria-selected="false"
+                aria-controls="panel-progress" tabindex="-1" class="nav-tab">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                <span class="nav-tab-label">Progress</span>
+            </button>
+        </nav>
+
+
+        <!-- View Panel 1: Main Translator -->
+        <section id="panel-translator" role="tabpanel" aria-labelledby="tab-translator" class="view-panel active">
+            <main class="wrapper">
+                <div class="text-input">
+                    <div class="input-col from-col">
+                        <label for="from-text" class="visually-hidden">Source text</label>
+                        <textarea id="from-text" class="from-text" placeholder="Type or paste text here..." spellcheck="false"
+                            aria-label="Source text to translate"></textarea>
                     </div>
-                    <select>
-                        <option value="en-US">English</option>
-                        <option value="hi-IN">Hindi</option>
-                        <option value="ne-NP">Nepali</option>
-                    </select>
-                </li>
-                <li class="exchange"><i class="fas fa-exchange-alt"></i></li>
-                <li class="row to">
-                    <select>
-                        <option value="en-US">English</option>
-                        <option value="hi-IN">Hindi</option>
-                        <option value="ne-NP">Nepali</option>
-                    </select>
-                    <div class="icons">
-                        <i id="to" class="fas fa-volume-up"></i>
-                        <i id="to" class="fas fa-copy"></i>
+                    <div class="input-col to-col">
+                        <label for="to-text" class="visually-hidden">Translated text</label>
+                        <textarea id="to-text" class="to-text" placeholder="Translation will appear here..." readonly
+                            spellcheck="false" aria-label="Translated text" aria-readonly="true"></textarea>
+                    </div>
+                </div>
+
+                <ul class="controls">
+                    <li class="row from">
+                        <div class="icons">
+                            <button type="button" class="icon-btn" id="from-volume-btn" title="Listen to source text"
+                                aria-label="Listen to source text">
+                                <i class="fas fa-volume-up" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="icon-btn" id="from-copy-btn" title="Copy source text to clipboard"
+                                aria-label="Copy source text to clipboard">
+                                <i class="fas fa-copy" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="select-box">
+                            <label for="from-select" class="visually-hidden">Source language</label>
+                            <select id="from-select" aria-label="Select source language"></select>
+                        </div>
+                    </li>
+
+                    <li class="exchange-item">
+                        <button type="button" class="exchange-btn" id="exchange-btn" title="Swap source and target languages"
+                            aria-label="Swap source and target languages">
+                            <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+                        </button>
+                    </li>
+
+                    <li class="row to">
+                        <div class="select-box">
+                            <label for="to-select" class="visually-hidden">Target language</label>
+                            <select id="to-select" aria-label="Select target language"></select>
+                        </div>
+                        <div class="icons">
+                            <button type="button" class="icon-btn" id="save-translation-btn" title="Save translation to Vocabulary Notebook"
+                                aria-label="Save translation to Vocabulary Notebook" disabled>
+                                <i class="far fa-bookmark" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="icon-btn" id="to-volume-btn" title="Listen to translated text"
+                                aria-label="Listen to translated text">
+                                <i class="fas fa-volume-up" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="icon-btn" id="to-copy-btn" title="Copy translated text to clipboard"
+                                aria-label="Copy translated text to clipboard">
+                                <i class="fas fa-copy" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </main>
+
+            <button type="button" class="translate-btn" id="translate-btn">
+                <span class="btn-text">Translate Text</span>
+                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+
+            <!-- Translation Privacy Notice -->
+            <div id="translator-privacy-notice" class="translator-privacy-notice" role="note" aria-label="Translation privacy notice">
+                <i class="fas fa-shield-alt privacy-notice-icon" aria-hidden="true"></i>
+                <p class="privacy-notice-text">
+                    <strong>Privacy notice:</strong> Text entered for translation is sent over the internet to Google Translate or MyMemory. Avoid entering passwords or sensitive personal information.
+                </p>
+            </div>
+        </section>
+
+        <!-- View Panel 2: Vocabulary Notebook -->
+        <section id="panel-notebook" role="tabpanel" aria-labelledby="tab-notebook" class="view-panel" hidden>
+            <div class="notebook-wrapper">
+                <!-- Notebook Toolbar: Search, Filters & Actions -->
+                <div class="notebook-toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                        <input type="search" id="notebook-search-input" class="search-input"
+                            placeholder="Search saved translations..." aria-label="Search saved translations">
+                        <button type="button" id="notebook-search-clear-btn" class="search-clear-btn"
+                            title="Clear search query" aria-label="Clear search query" hidden>
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
 
-                </li>
-            </ul>
+                    <div class="toolbar-actions">
+                        <div class="filter-group">
+                            <div class="toolbar-select-box">
+                                <label for="notebook-lang-filter" class="visually-hidden">Filter by language</label>
+                                <select id="notebook-lang-filter" class="toolbar-select" aria-label="Filter by language">
+                                    <option value="all">All Languages</option>
+                                </select>
+                            </div>
+
+                            <button type="button" id="notebook-fav-filter-btn" class="filter-toggle-btn"
+                                aria-pressed="false" title="Show favorite translations only">
+                                <i class="far fa-star" aria-hidden="true"></i>
+                                <span>Favorites</span>
+                            </button>
+                        </div>
+
+                        <button type="button" id="notebook-clear-all-btn" class="clear-all-btn"
+                            title="Clear all saved translations" aria-label="Clear all saved translations">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notebook Meta Bar: Counts & Reset Option -->
+                <div class="notebook-meta-bar">
+                    <span id="notebook-results-count" class="results-count" aria-live="polite">0 saved items</span>
+                    <button type="button" id="notebook-reset-filters-btn" class="reset-filters-link" hidden>
+                        Reset filters
+                    </button>
+                </div>
+
+                <!-- Notebook Entries List -->
+                <div id="notebook-entries-list" class="notebook-list" role="feed" aria-label="Saved vocabulary list">
+                    <!-- Populated dynamically via script.js -->
+                </div>
+
+                <!-- Empty State Display -->
+                <div id="notebook-empty-state" class="notebook-empty-state" hidden>
+                    <div class="empty-icon-wrap" aria-hidden="true">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h2 class="empty-title">Your Notebook is Empty</h2>
+                    <p class="empty-desc">
+                        Save translations using the bookmark icon in the translator to build your personal vocabulary collection for quick study and reference.
+                    </p>
+                    <button type="button" id="empty-start-translating-btn" class="primary-pill-btn">
+                        <i class="fas fa-language" aria-hidden="true"></i>
+                        <span>Start Translating</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View Panel 3: Flashcard Practice & Quizzes -->
+        <section id="panel-practice" role="tabpanel" aria-labelledby="tab-practice" class="view-panel" hidden>
+            <div class="practice-wrapper">
+                <!-- Practice Mode Sub-Navigation (Flashcards vs Quiz) -->
+                <div class="practice-subnav" role="tablist" aria-label="Practice Mode Selection">
+                    <button type="button" id="practice-mode-flashcards-btn" class="practice-subnav-btn active" role="tab" aria-selected="true" aria-controls="practice-flashcards-container">
+                        <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        <span>Flashcards</span>
+                    </button>
+                    <button type="button" id="practice-mode-quiz-btn" class="practice-subnav-btn" role="tab" aria-selected="false" aria-controls="practice-quiz-container">
+                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                        <span>Quiz</span>
+                    </button>
+                </div>
+
+                <!-- 1. Flashcards Mode Container -->
+                <div id="practice-flashcards-container" class="practice-mode-view" role="tabpanel" aria-labelledby="practice-mode-flashcards-btn">
+                    <!-- Practice Toolbar / Header: Progress Counter & Session Indicator -->
+                    <div class="practice-header">
+                        <div class="practice-progress-wrap">
+                            <span id="practice-card-counter" class="practice-counter" aria-live="polite">Card 0 of 0</span>
+                            <div class="practice-score-summary" id="practice-score-summary" aria-label="Session score summary">
+                                <span class="score-pill knew" title="Cards marked as known">
+                                    <i class="fas fa-check" aria-hidden="true"></i>
+                                    <span id="practice-known-count">0</span>
+                                </span>
+                                <span class="score-pill practice" title="Cards needing more practice">
+                                    <i class="fas fa-redo" aria-hidden="true"></i>
+                                    <span id="practice-learning-count">0</span>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="button" id="practice-restart-btn" class="practice-restart-btn" title="Restart practice session" aria-label="Restart practice session">
+                            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                            <span>Restart</span>
+                        </button>
+                    </div>
+
+                    <!-- Flashcard Active Container -->
+                    <div id="practice-card-container" class="practice-card-container">
+                        <div class="flashcard" id="flashcard" role="region" aria-label="Vocabulary Flashcard" tabindex="0">
+                            <!-- Front of Flashcard (Prompt / Word in Source Language) -->
+                            <div class="flashcard-face flashcard-front" id="flashcard-front">
+                                <div class="flashcard-meta">
+                                    <span class="flashcard-badge" id="flashcard-front-lang">English</span>
+                                    <button type="button" class="card-icon-btn" id="flashcard-front-speak-btn"
+                                        title="Listen to original text" aria-label="Listen to original text">
+                                        <i class="fas fa-volume-up" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="flashcard-content">
+                                    <p class="flashcard-text" id="flashcard-front-text"></p>
+                                </div>
+                                <div class="flashcard-hint">
+                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <span>Try to recall the translation</span>
+                                </div>
+                            </div>
+
+                            <!-- Back of Flashcard (Answer / Translation in Target Language) -->
+                            <div class="flashcard-face flashcard-back" id="flashcard-back" hidden>
+                                <div class="flashcard-meta">
+                                    <span class="flashcard-badge target" id="flashcard-back-lang">Hindi</span>
+                                    <button type="button" class="card-icon-btn" id="flashcard-back-speak-btn"
+                                        title="Listen to translated text" aria-label="Listen to translated text">
+                                        <i class="fas fa-volume-up" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div class="flashcard-content">
+                                    <p class="flashcard-text translated" id="flashcard-back-text"></p>
+                                </div>
+                                <div class="flashcard-status-tag" id="flashcard-status-tag" aria-live="polite"></div>
+                            </div>
+                        </div>
+
+                        <!-- Flip / Reveal Control -->
+                        <div class="flashcard-toggle-wrap">
+                            <button type="button" id="flashcard-flip-btn" class="flashcard-reveal-btn" aria-expanded="false">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span id="flashcard-flip-btn-text">Show Answer</span>
+                            </button>
+                        </div>
+
+                        <!-- Evaluation Actions (I Knew It / Need More Practice) -->
+                        <div class="flashcard-evaluation-actions" id="flashcard-eval-actions">
+                            <button type="button" id="practice-need-work-btn" class="eval-btn eval-practice" title="Mark that you need more practice with this card">
+                                <i class="fas fa-redo" aria-hidden="true"></i>
+                                <span>Need more practice</span>
+                            </button>
+                            <button type="button" id="practice-knew-it-btn" class="eval-btn eval-knew" title="Mark that you knew this card">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                                <span>I knew it</span>
+                            </button>
+                        </div>
+
+                        <!-- Navigation Controls: Previous / Next -->
+                        <div class="flashcard-nav-controls">
+                            <button type="button" id="practice-prev-btn" class="practice-nav-btn" aria-label="Previous card">
+                                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                                <span>Previous</span>
+                            </button>
+                            <button type="button" id="practice-next-btn" class="practice-nav-btn" aria-label="Next card">
+                                <span>Next</span>
+                                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Quiz Mode Container -->
+                <div id="practice-quiz-container" class="practice-mode-view" role="tabpanel" aria-labelledby="practice-mode-quiz-btn" hidden>
+                    <!-- Quiz Setup Screen -->
+                    <div id="quiz-setup-view" class="quiz-setup-view">
+                        <div class="quiz-setup-card">
+                            <div class="quiz-setup-header">
+                                <h2 class="quiz-title"><i class="fas fa-question-circle" aria-hidden="true"></i> Vocabulary Quiz</h2>
+                                <p class="quiz-desc">Test your recall with interactive multiple-choice questions generated from your saved vocabulary entries.</p>
+                            </div>
+
+                            <!-- Setup Form Controls -->
+                            <div class="quiz-config-grid">
+                                <!-- Direction Choice -->
+                                <div class="quiz-config-item">
+                                    <label class="quiz-config-label" id="label-quiz-direction">Translation Direction</label>
+                                    <div class="quiz-direction-toggle" role="radiogroup" aria-labelledby="label-quiz-direction">
+                                        <button type="button" class="quiz-dir-btn active" id="quiz-dir-forward-btn" role="radio" aria-checked="true" data-dir="forward">
+                                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                                            <span>Original → Translation</span>
+                                        </button>
+                                        <button type="button" class="quiz-dir-btn" id="quiz-dir-reverse-btn" role="radio" aria-checked="false" data-dir="reverse">
+                                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                                            <span>Translation → Original</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Language Pair Filter (when multiple exist) -->
+                                <div class="quiz-config-item" id="quiz-lang-pair-item">
+                                    <label for="quiz-lang-pair-select" class="quiz-config-label">Language Pair</label>
+                                    <div class="select-wrapper">
+                                        <select id="quiz-lang-pair-select" class="quiz-select" aria-label="Filter quiz by language pair">
+                                            <option value="all">All Language Pairs</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Question Count -->
+                                <div class="quiz-config-item">
+                                    <label for="quiz-count-select" class="quiz-config-label">Quiz Length</label>
+                                    <div class="select-wrapper">
+                                        <select id="quiz-count-select" class="quiz-select" aria-label="Select number of questions">
+                                            <option value="5">5 Questions</option>
+                                            <option value="10">10 Questions</option>
+                                            <option value="all">All Available Words</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Shuffle Ordering -->
+                                <div class="quiz-config-item checkbox-item">
+                                    <label class="quiz-checkbox-label">
+                                        <input type="checkbox" id="quiz-shuffle-check" class="quiz-checkbox" checked>
+                                        <span>Shuffle question order</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Small Pool Notice (2-3 entries) -->
+                            <div id="quiz-small-pool-notice" class="quiz-info-banner" hidden>
+                                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                                <span id="quiz-small-pool-text">With 2 saved entries, questions will feature 2 answer choices instead of 4.</span>
+                            </div>
+
+                            <!-- Insufficient Pool Warning (< 2 entries) -->
+                            <div id="quiz-eligibility-warning" class="quiz-warning-banner" hidden>
+                                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                                <div class="quiz-warning-content">
+                                    <strong>More Vocabulary Needed</strong>
+                                    <p id="quiz-warning-text">A multiple-choice quiz requires at least 2 saved words to provide answer options. Save more translations in the Notebook or use Flashcards to study your current entries.</p>
+                                    <div class="quiz-warning-actions">
+                                        <button type="button" id="quiz-warning-flashcards-btn" class="secondary-pill-btn">
+                                            <i class="fas fa-layer-group" aria-hidden="true"></i>
+                                            <span>Switch to Flashcards</span>
+                                        </button>
+                                        <button type="button" id="quiz-warning-translate-btn" class="primary-pill-btn">
+                                            <i class="fas fa-language" aria-hidden="true"></i>
+                                            <span>Go to Translator</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="quiz-start-actions">
+                                <button type="button" id="quiz-start-btn" class="primary-pill-btn quiz-start-btn">
+                                    <i class="fas fa-play" aria-hidden="true"></i>
+                                    <span>Start Quiz</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Quiz Screen -->
+                    <div id="quiz-active-view" class="quiz-active-view" hidden>
+                        <div class="quiz-header">
+                            <div class="quiz-progress-wrap">
+                                <span id="quiz-question-counter" class="practice-counter" aria-live="polite">Question 1 of 5</span>
+                                <div class="quiz-progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-label="Quiz progress">
+                                    <div id="quiz-progress-bar" class="quiz-progress-fill" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                            <button type="button" id="quiz-quit-btn" class="practice-restart-btn" title="Exit Quiz" aria-label="Exit current quiz">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                                <span>Exit</span>
+                            </button>
+                        </div>
+
+                        <!-- Question Card -->
+                        <div class="quiz-card" role="region" aria-label="Quiz Question">
+                            <div class="quiz-card-meta">
+                                <span class="flashcard-badge" id="quiz-prompt-badge">English</span>
+                                <button type="button" class="card-icon-btn" id="quiz-prompt-speak-btn"
+                                    title="Listen to question prompt" aria-label="Listen to question prompt">
+                                    <i class="fas fa-volume-up" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <div class="quiz-prompt-body">
+                                <span class="quiz-prompt-label">Select the correct translation:</span>
+                                <h3 id="quiz-prompt-text" class="quiz-prompt-text"></h3>
+                            </div>
+
+                            <!-- Multiple-choice options -->
+                            <div id="quiz-options-grid" class="quiz-options-grid" role="radiogroup" aria-labelledby="quiz-prompt-text">
+                                <!-- Rendered dynamically by script.js -->
+                            </div>
+
+                            <!-- Immediate Feedback Banner -->
+                            <div id="quiz-feedback-banner" class="quiz-feedback-banner" aria-live="polite" hidden></div>
+
+                            <!-- Action Footer -->
+                            <div class="quiz-card-footer">
+                                <button type="button" id="quiz-next-btn" class="primary-pill-btn quiz-next-btn" disabled>
+                                    <span id="quiz-next-btn-text">Next Question</span>
+                                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Results Screen -->
+                    <div id="quiz-results-view" class="quiz-results-view" hidden>
+                        <div class="quiz-results-card">
+                            <div class="quiz-results-header">
+                                <div class="quiz-score-badge" id="quiz-score-badge">
+                                    <span id="quiz-results-percent" class="quiz-score-percent">100%</span>
+                                    <span class="quiz-score-caption">Final Score</span>
+                                </div>
+                                <h2 class="quiz-results-title">Quiz Completed!</h2>
+                                <p id="quiz-results-message" class="quiz-results-message">Outstanding job! You've mastered this vocabulary.</p>
+                            </div>
+
+                            <!-- Stats Tally -->
+                            <div class="quiz-stats-grid">
+                                <div class="quiz-stat-card">
+                                    <span class="quiz-stat-val" id="quiz-results-total">0</span>
+                                    <span class="quiz-stat-lbl">Questions</span>
+                                </div>
+                                <div class="quiz-stat-card correct">
+                                    <span class="quiz-stat-val" id="quiz-results-correct">0</span>
+                                    <span class="quiz-stat-lbl">Correct</span>
+                                </div>
+                                <div class="quiz-stat-card incorrect">
+                                    <span class="quiz-stat-val" id="quiz-results-incorrect">0</span>
+                                    <span class="quiz-stat-lbl">Incorrect</span>
+                                </div>
+                            </div>
+
+                            <!-- Review Incorrect Answers Section -->
+                            <div id="quiz-review-section" class="quiz-review-section" hidden>
+                                <button type="button" id="quiz-review-toggle-btn" class="quiz-review-toggle-btn" aria-expanded="false">
+                                    <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                                    <span id="quiz-review-toggle-text">Review Incorrect Answers (0)</span>
+                                    <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
+                                </button>
+                                <div id="quiz-review-list" class="quiz-review-list" hidden>
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Results Navigation Actions -->
+                            <div class="quiz-results-actions">
+                                <button type="button" id="quiz-retake-btn" class="primary-pill-btn">
+                                    <i class="fas fa-redo" aria-hidden="true"></i>
+                                    <span>Retake Quiz</span>
+                                </button>
+                                <button type="button" id="quiz-settings-btn" class="secondary-pill-btn">
+                                    <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                                    <span>Quiz Settings</span>
+                                </button>
+                                <button type="button" id="quiz-back-flashcards-btn" class="secondary-pill-btn">
+                                    <i class="fas fa-layer-group" aria-hidden="true"></i>
+                                    <span>Back to Flashcards</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State Display for Practice (When 0 Entries in Notebook) -->
+                <div id="practice-empty-state" class="practice-empty-state" hidden>
+                    <div class="empty-icon-wrap" aria-hidden="true">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h2 class="empty-title">No Vocabulary to Practice</h2>
+                    <p class="empty-desc">
+                        Save translations to your Vocabulary Notebook first to practice them here with flashcards and quizzes.
+                    </p>
+                    <div class="empty-actions">
+                        <button type="button" id="practice-empty-translate-btn" class="primary-pill-btn">
+                            <i class="fas fa-language" aria-hidden="true"></i>
+                            <span>Go to Translator</span>
+                        </button>
+                        <button type="button" id="practice-empty-notebook-btn" class="secondary-pill-btn">
+                            <i class="fas fa-book-open" aria-hidden="true"></i>
+                            <span>View Notebook</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View Panel 4: Learning Progress Dashboard -->
+        <section id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" class="view-panel" hidden>
+            <div class="progress-wrapper">
+                <!-- Dashboard Header & Notice -->
+                <div class="progress-header">
+                    <div class="progress-header-top">
+                        <div class="progress-title-wrap">
+                            <h2>Learning Progress & History</h2>
+                            <p>Track your saved vocabulary overview, lifetime practice statistics, and daily learning activity.</p>
+                        </div>
+                        <button type="button" id="progress-reset-history-btn" class="progress-reset-btn" title="Reset learning history" aria-label="Reset learning history">
+                            <i class="fas fa-history" aria-hidden="true"></i>
+                            <span>Reset History</span>
+                        </button>
+                    </div>
+                    <div class="persistent-notice-badge" role="note" aria-label="Persistent learning data notice">
+                        <i class="fas fa-database" aria-hidden="true"></i>
+                        <span><strong>Persistent Learning History:</strong> Your completed quiz scores, accuracy, and flashcard review counts are saved locally and persist across browser sessions. Note: Historical tracking begins when this feature is introduced; earlier activity is not fabricated.</span>
+                    </div>
+                </div>
+
+                <!-- Metric Cards Grid -->
+                <div class="progress-grid">
+                    <!-- Permanent Storage Cards -->
+                    <div class="metric-card permanent">
+                        <div class="metric-card-header">
+                            <span class="metric-scope-badge permanent">Permanent</span>
+                            <i class="fas fa-book" aria-hidden="true"></i>
+                        </div>
+                        <div class="metric-value" id="progress-total-vocab">0</div>
+                        <div class="metric-label">Saved Words</div>
+                        <div class="metric-subtext">Total entries in notebook</div>
+                    </div>
+
+                    <div class="metric-card permanent">
+                        <div class="metric-card-header">
+                            <span class="metric-scope-badge permanent">Permanent</span>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </div>
+                        <div class="metric-value" id="progress-total-favs">0</div>
+                        <div class="metric-label">Favorites</div>
+                        <div class="metric-subtext">Starred vocabulary items</div>
+                    </div>
+
+                    <!-- Lifetime Activity Cards -->
+                    <div class="metric-card session">
+                        <div class="metric-card-header">
+                            <span class="metric-scope-badge lifetime">Lifetime</span>
+                            <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        </div>
+                        <div class="metric-value" id="progress-flashcards-reviewed">0</div>
+                        <div class="metric-label">Flashcards Reviewed</div>
+                        <div class="metric-subtext">Lifetime cards assessed</div>
+                    </div>
+
+                    <div class="metric-card session">
+                        <div class="metric-card-header">
+                            <span class="metric-scope-badge lifetime">Lifetime</span>
+                            <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                        </div>
+                        <div class="metric-value" id="progress-quiz-attempts">0</div>
+                        <div class="metric-label">Quizzes Completed</div>
+                        <div class="metric-subtext">Lifetime quiz attempts</div>
+                    </div>
+
+                    <div class="metric-card session highlight">
+                        <div class="metric-card-header">
+                            <span class="metric-scope-badge lifetime">Lifetime</span>
+                            <i class="fas fa-bullseye" aria-hidden="true"></i>
+                        </div>
+                        <div class="metric-value" id="progress-quiz-accuracy">0%</div>
+                        <div class="metric-label">Overall Quiz Accuracy</div>
+                        <div class="metric-subtext" id="progress-quiz-answers-summary">
+                            <span id="progress-quiz-correct">0</span> correct · <span id="progress-quiz-incorrect">0</span> incorrect
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Learning Activity Section -->
+                <div class="progress-daily-card">
+                    <div class="viz-header">
+                        <div class="viz-title-group">
+                            <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                            <h3>Daily Learning Activity</h3>
+                        </div>
+                        <div class="viz-subtitle">Activity logged from real completed quizzes and flashcard assessments</div>
+                    </div>
+
+                    <!-- Daily Empty State -->
+                    <div id="progress-daily-empty-state" class="progress-empty-state">
+                        <div class="empty-icon-wrap" aria-hidden="true">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <h4 class="empty-title">No Daily Activity Recorded</h4>
+                        <p class="empty-desc">
+                            Complete a quiz or assess flashcards to start logging your daily learning activity.
+                        </p>
+                    </div>
+
+                    <!-- Daily Activity Container (Populated dynamically) -->
+                    <div id="progress-daily-container" class="progress-daily-container" hidden>
+                        <div id="progress-daily-list" class="progress-daily-list" role="list" aria-label="Daily learning activity breakdown">
+                            <!-- Daily activity items injected by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Performance Visualization Section -->
+                <div class="progress-visualization-card">
+                    <div class="viz-header">
+                        <div class="viz-title-group">
+                            <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                            <h3>Recent Quiz History & Performance</h3>
+                        </div>
+                        <div class="viz-subtitle">Lifetime completed quiz attempts and scores</div>
+                    </div>
+
+                    <!-- Empty State for Visualizer -->
+                    <div id="progress-empty-state" class="progress-empty-state">
+                        <div class="empty-icon-wrap" aria-hidden="true">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h4 class="empty-title">No Quiz Attempts Yet</h4>
+                        <p class="empty-desc">
+                            Complete a vocabulary quiz in the Practice tab to view your score history, accuracy breakdown, and performance trends here.
+                        </p>
+                        <div class="empty-actions">
+                            <button type="button" id="progress-empty-quiz-btn" class="primary-pill-btn">
+                                <i class="fas fa-play" aria-hidden="true"></i>
+                                <span>Take a Quiz</span>
+                            </button>
+                            <button type="button" id="progress-empty-flashcards-btn" class="secondary-pill-btn">
+                                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                                <span>Review Flashcards</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz History Container (Populated dynamically) -->
+                    <div id="progress-history-container" class="progress-history-container" hidden>
+                        <div id="progress-history-list" class="progress-history-list" role="list" aria-label="Completed quiz attempts">
+                            <!-- Attempt cards injected by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accessible Live Region for Screen Readers and Status Feedback -->
+
+        <div id="status-area" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Accessible Confirmation Modal for Clear All Vocabulary -->
+        <div id="vocab-confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true"
+            aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-desc" hidden>
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div class="modal-icon warning" aria-hidden="true">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2 id="confirm-modal-title">Clear All Saved Translations?</h2>
+                </div>
+                <p id="confirm-modal-desc">
+                    Are you sure you want to permanently delete all saved entries in your Vocabulary Notebook? This action cannot be undone.
+                </p>
+                <div class="modal-actions">
+                    <button type="button" id="modal-cancel-btn" class="modal-btn secondary-btn">Cancel</button>
+                    <button type="button" id="modal-confirm-btn" class="modal-btn danger-btn">
+                        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        <span>Delete All</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        <button>Translate Text</button>
+
+        <!-- Accessible Confirmation Modal for Reset Learning History -->
+        <div id="progress-reset-confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true"
+            aria-labelledby="reset-confirm-modal-title" aria-describedby="reset-confirm-modal-desc" hidden>
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div class="modal-icon warning" aria-hidden="true">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h2 id="reset-confirm-modal-title">Reset Learning History?</h2>
+                </div>
+                <p id="reset-confirm-modal-desc">
+                    Are you sure you want to permanently reset your quiz scores, attempt history, and flashcard review statistics? Your saved vocabulary entries and favorites will remain untouched.
+                </p>
+                <div class="modal-actions">
+                    <button type="button" id="reset-modal-cancel-btn" class="modal-btn secondary-btn">Cancel</button>
+                    <button type="button" id="reset-modal-confirm-btn" class="modal-btn danger-btn">
+                        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        <span>Reset History</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="js/countries.js"></script>
-    <script src="js/script.js"></script>
-
+    <!-- Scripts loaded from current directory -->
+    <script src="countries.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
